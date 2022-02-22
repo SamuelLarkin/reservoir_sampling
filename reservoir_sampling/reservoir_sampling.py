@@ -25,7 +25,7 @@ def reservoir_sampling(iterable: Iterable[Any], sample_size: int) -> List[str]:
     sample_size:int Size of the reservoir
     """
     reservoir = []
-    for i, line in enumerate(iterable, 1):
+    for i, line in enumerate(iterable, start=1):
         if i <= sample_size:
             reservoir.append((i, line))
         else:
@@ -47,17 +47,17 @@ def reservoir_sampling_optimal(iterable: Iterable[Any], sample_size: int) -> Lis
             floor,
             log,
             )
-    reservoir = list(islice(enumerate(iterable, 1), sample_size))
+    reservoir = list(islice(enumerate(items, start=1), sample_size))
 
     W = exp(log(random.random()) / sample_size)
-    next_item_index = sample_size + floor(log(random.random())/log(1-W)) + 1
+    next_item_index = sample_size + floor(log(random.random()) / log(1-W)) + 1
 
     for i, line in enumerate(items, start=sample_size):
         if i == next_item_index:
             k = random.randint(0, sample_size-1)
             reservoir[k] = (i+1, line)
             W = W * exp(log(random.random())/sample_size)
-            next_item_index += floor(log(random.random())/log(1-W)) + 1
+            next_item_index += floor(log(random.random()) / log(1-W)) + 1
 
     return reservoir
 
