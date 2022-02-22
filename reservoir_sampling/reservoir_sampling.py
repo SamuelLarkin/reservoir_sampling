@@ -74,11 +74,12 @@ def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str
             )
     from math import log
 
-    iterable = iter(iterable)
-    h = []
-    for i, (w, v) in islice(enumerate(iterable, 1), sample_size):
-        r = random.random() ** (1. / w)
-        heappush(h, (r, i, v))
+    items = iter(iterable)
+    h = [
+            (random.random() ** (1. / w), i, v)
+            for i, (w, v) in enumerate(islice(items, sample_size), start=1)
+            ]
+    heapify(h)
 
     X = log(random.random()) / log(h[0][0])
 
