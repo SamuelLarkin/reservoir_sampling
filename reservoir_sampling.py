@@ -8,6 +8,8 @@ import random
 import sys
 
 from math import log
+from more_itertools import with_iter
+from operator import itemgetter
 from pathlib import Path
 from typing import (
         Iterable,
@@ -23,11 +25,11 @@ def reservoir_sampling(iterable: Iterable[str], sample_size: int) -> List[str]:
     reservoir = []
     for i, line in enumerate(iterable, 1):
         if i <= sample_size:
-            reservoir.append((i, line.strip()))
+            reservoir.append((i, line))
         else:
             k = random.randint(0, i)
             if k < sample_size:
-                reservoir[k] = (i, line.strip())
+                reservoir[k] = (i, line)
 
     return reservoir
 
@@ -49,10 +51,10 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
 
     for i, line in enumerate(iterable, 1):
         if i <= sample_size:
-            reservoir.append((i, line.strip()))
+            reservoir.append((i, line))
         elif i == next_item_index:
             k = random.randint(0, sample_size-1)
-            reservoir[k] = (i, line.strip())
+            reservoir[k] = (i, line)
             W = W * exp(log(random.random())/sample_size)
             next_item_index += floor(log(random.random())/log(1-W)) + 1
 
@@ -69,20 +71,20 @@ def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
     h = []
     for i, (w, v) in enumerate(iterable, 1):
         r = random.random() ** (1. / w)
-        heapq.heappush(h, (r, v))
+        heapq.heappush(h, (r, i, v))
         if i == sample_size:
             break
 
     X = log(random.random()) / log(h[0][0])
 
-    for w, v in iterable:
+    for i, (w, v) in enumerate(iterable, sample_size):
         X -= w
         if X <= 0.:
             t = h[0][0] ** w
             r = random.uniform(t, 1) ** (1. / w)
 
             heapq.heappop(h)
-            heapq.heappush(h, (r, v))
+            heapq.heappush(h, (r, i, v))
 
             X = log(random.random()) / log(h[0][0])
 
@@ -101,9 +103,19 @@ def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
 @click.option(
         '-n',
         '--line-number/--no-line-number',
-        'line_number',
+        'show_line_number',
         default=False,
+        show_default=True,
         help="Prepend with line number")
+@click.option(
+        "-w",
+        "--weight",
+        "show_weights",
+        is_flag=True,
+        show_default=True,
+        default=False,
+        type=bool,
+        help="Show weights when doing weighted sampling.")
 @click.option(
         '-s',
         '--size',
@@ -120,32 +132,42 @@ def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
 def main(
         samples: List[Path],
         sample_size: int,
-        line_number: bool,
+        show_line_number: bool,
+        show_weights: bool,
         seed: int,
         ):
     """
     Sample stdin with reservoir sampling technique.
     """
     random.seed(seed)
-    if len(samples) == 0:
-        samples = (sys.stdin,)
 
-    if len(samples) == 1:
-        samples = reservoir_sampling_optimal(sys.stdin, sample_size)
-        if line_number:
-            samples = map(lambda x: '%d\t%s'%x, samples)
+    if len(samples) < 2:
+        print("Unweighted Sampling", file=sys.stderr)
+        if len(samples) == 0:
+            sample_stream = sys.stdin
         else:
-            samples = map(lambda x: x[1], samples)
+            sample_stream = with_iter(samples[0].open(mode="r", encoding="UTF-8"))
+        sample_stream = map(str.strip, sample_stream)
+        samples = reservoir_sampling_optimal(sample_stream, sample_size)
     elif len(samples) == 2:
+        print("Weighted Sampling", file=sys.stderr)
         samples_fn, weights_fn = samples
-        with samples_fn.open(mode="r", encoding="UTF-8") as samples, weights_fn.open(mode="r", encoding="UTF-8") as weights:
-            samples = map(str.strip, samples)
-            weights = map(str.strip, weights)
-            weights = map(float, weights)
-            samples = a_exp_j(zip(weights, samples), sample_size)
+        with samples_fn.open(mode="r", encoding="UTF-8") as sample_stream, weights_fn.open(mode="r", encoding="UTF-8") as weight_stream:
+            sample_stream = map(str.strip, sample_stream)
+            weight_stream = map(str.strip, weight_stream)
+            weight_stream = map(float, weight_stream)
+            samples = a_exp_j(zip(weight_stream, sample_stream), sample_size)
+        if show_weights:
+            samples = map(lambda e: (e[1], f"{e[0]}\t{e[-1]}"), samples)
+        else:
+            samples = map(lambda e: (e[1], e[-1]), samples)
     else:
-        assert f"Invalid number of files ({len(samples)})"
+        assert False, f"Invalid number of files ({len(samples)})"
 
+    if show_line_number:
+        samples = map(lambda e: f"{e[0]}\t{e[-1]}", samples)
+    else:
+        samples = map(itemgetter(1), samples)
     print(*samples, sep='\n')
 
 
