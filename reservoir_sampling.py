@@ -7,6 +7,8 @@ import click
 import random
 import sys
 
+from math import log
+from pathlib import Path
 from typing import (
         Iterable,
         List,
@@ -58,6 +60,33 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
 
 
 
+def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
+    """
+    [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
+    """
+    import heapq
+    iterable = iter(iterable)
+    h = []
+    for i, (w, v) in enumerate(iterable, 1):
+        r = random.random() ** (1. / w)
+        heapq.heappush(h, (r, v))
+        if i == sample_size:
+            break
+
+    X = log(random.random()) / log(h[0][0])
+
+    for w, v in iterable:
+        X -= w
+        if X <= 0.:
+            t = h[0][0] ** w
+            r = random.uniform(t, 1) ** (1. / w)
+
+            heapq.heappop(h)
+            heapq.heappush(h, (r, v))
+
+            X = log(random.random()) / log(h[0][0])
+
+    return h
 
 
 
@@ -83,7 +112,13 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
         default=100,
         show_default=True,
         help="Sample size")
+@click.argument(
+        "samples",
+        nargs=-1,
+        type=Path,
+        )
 def main(
+        samples: List[Path],
         sample_size: int,
         line_number: bool,
         seed: int,
@@ -92,11 +127,25 @@ def main(
     Sample stdin with reservoir sampling technique.
     """
     random.seed(seed)
-    samples = reservoir_sampling_optimal(sys.stdin, sample_size)
-    if line_number:
-        samples = map(lambda x: '%d\t%s'%x, samples)
+    if len(samples) == 0:
+        samples = (sys.stdin,)
+
+    if len(samples) == 1:
+        samples = reservoir_sampling_optimal(sys.stdin, sample_size)
+        if line_number:
+            samples = map(lambda x: '%d\t%s'%x, samples)
+        else:
+            samples = map(lambda x: x[1], samples)
+    elif len(samples) == 2:
+        samples_fn, weights_fn = samples
+        with samples_fn.open(mode="r", encoding="UTF-8") as samples, weights_fn.open(mode="r", encoding="UTF-8") as weights:
+            samples = map(str.strip, samples)
+            weights = map(str.strip, weights)
+            weights = map(float, weights)
+            samples = a_exp_j(zip(weights, samples), sample_size)
     else:
-        samples = map(lambda x: x[1], samples)
+        assert f"Invalid number of files ({len(samples)})"
+
     print(*samples, sep='\n')
 
 
