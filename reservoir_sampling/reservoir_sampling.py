@@ -11,13 +11,15 @@ from more_itertools import with_iter
 from operator import itemgetter
 from pathlib import Path
 from typing import (
+        Any,
         Iterable,
         List,
+        Tuple,
         )
 
 
 
-def reservoir_sampling(iterable: Iterable[str], sample_size: int) -> List[str]:
+def reservoir_sampling(iterable: Iterable[Any], sample_size: int) -> List[str]:
     """
     sample_size:int Size of the reservoir
     """
@@ -34,7 +36,7 @@ def reservoir_sampling(iterable: Iterable[str], sample_size: int) -> List[str]:
 
 
 
-def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> List[str]:
+def reservoir_sampling_optimal(iterable: Iterable[Any], sample_size: int) -> List[str]:
     """
     sample_size:int Size of the reservoir
     [An optimal algorithm](https://en.wikipedia.org/wiki/Reservoir_sampling)
@@ -60,7 +62,7 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
 
 
 
-def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
+def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str]:
     """
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
     """
