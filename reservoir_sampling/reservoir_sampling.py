@@ -52,10 +52,10 @@ def reservoir_sampling_optimal(iterable: Iterable[Any], sample_size: int) -> Lis
     W = exp(log(random.random()) / sample_size)
     next_item_index = sample_size + floor(log(random.random())/log(1-W)) + 1
 
-    for i, line in enumerate(iterable, sample_size+1):
+    for i, line in enumerate(items, start=sample_size):
         if i == next_item_index:
             k = random.randint(0, sample_size-1)
-            reservoir[k] = (i, line)
+            reservoir[k] = (i+1, line)
             W = W * exp(log(random.random())/sample_size)
             next_item_index += floor(log(random.random())/log(1-W)) + 1
 
@@ -78,14 +78,14 @@ def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str
 
     X = log(random.random()) / log(h[0][0])
 
-    for i, (w, v) in enumerate(iterable, sample_size+1):
+    for i, (w, v) in enumerate(items, start=sample_size):
         X -= w
         if X <= 0.:
             t = h[0][0] ** w
             r = random.uniform(t, 1) ** (1. / w)
 
             heapq.heappop(h)
-            heapq.heappush(h, (r, i, v))
+            heapq.heappush(h, (r, i+1, v))
 
             X = log(random.random()) / log(h[0][0])
 
