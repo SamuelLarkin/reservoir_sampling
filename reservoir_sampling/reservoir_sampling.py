@@ -67,14 +67,18 @@ def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str
     """
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
     """
-    import heapq
+    from heapq import (
+            heapify,
+            heappop,
+            heappush,
+            )
     from math import log
 
     iterable = iter(iterable)
     h = []
     for i, (w, v) in islice(enumerate(iterable, 1), sample_size):
         r = random.random() ** (1. / w)
-        heapq.heappush(h, (r, i, v))
+        heappush(h, (r, i, v))
 
     X = log(random.random()) / log(h[0][0])
 
@@ -84,8 +88,8 @@ def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str
             t = h[0][0] ** w
             r = random.uniform(t, 1) ** (1. / w)
 
-            heapq.heappop(h)
-            heapq.heappush(h, (r, i+1, v))
+            heappop(h)
+            heappush(h, (r, i+1, v))
 
             X = log(random.random()) / log(h[0][0])
 
