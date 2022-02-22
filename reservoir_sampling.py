@@ -14,6 +14,23 @@ from typing import (
 
 
 
+def reservoir_sampling(iterable: Iterable[str], sample_size: int) -> List[str]:
+    """
+    sample_size:int Size of the reservoir
+    """
+    reservoir = []
+    for i, line in enumerate(iterable, 1):
+        if i <= sample_size:
+            reservoir.append((i, line.strip()))
+        else:
+            k = random.randint(0, i)
+            if k < sample_size:
+                reservoir[k] = (i, line.strip())
+
+    return reservoir
+
+
+
 def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> List[str]:
     """
     sample_size:int Size of the reservoir
@@ -40,20 +57,7 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
     return reservoir
 
 
-def reservoir_sampling(iterable: Iterable[str], sample_size: int) -> List[str]:
-    """
-    sample_size:int Size of the reservoir
-    """
-    reservoir = []
-    for i, line in enumerate(iterable, 1):
-        if i <= sample_size:
-            reservoir.append((i, line.strip()))
-        else:
-            k = random.randint(0, i)
-            if k < sample_size:
-                reservoir[k] = (i, line.strip())
 
-    return reservoir
 
 
 
