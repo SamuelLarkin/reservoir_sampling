@@ -47,6 +47,8 @@ def reservoir_sampling_optimal(iterable: Iterable[Any], sample_size: int) -> Lis
             floor,
             log,
             )
+    items = iter(iterable)
+
     reservoir = list(islice(enumerate(items, start=1), sample_size))
 
     W = exp(log(random.random()) / sample_size)
