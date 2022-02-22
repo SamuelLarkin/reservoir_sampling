@@ -7,6 +7,7 @@ import click
 import random
 import sys
 
+from itertools import islice
 from more_itertools import with_iter
 from operator import itemgetter
 from pathlib import Path
