@@ -7,7 +7,6 @@ import click
 import random
 import sys
 
-from math import log
 from more_itertools import with_iter
 from operator import itemgetter
 from pathlib import Path
@@ -45,14 +44,13 @@ def reservoir_sampling_optimal(iterable: Iterable[str], sample_size: int) -> Lis
             floor,
             log,
             )
-    reservoir = []
+    reservoir = list(islice(enumerate(iterable, 1), sample_size))
+
     W = exp(log(random.random()) / sample_size)
     next_item_index = sample_size + floor(log(random.random())/log(1-W)) + 1
 
-    for i, line in enumerate(iterable, 1):
-        if i <= sample_size:
-            reservoir.append((i, line))
-        elif i == next_item_index:
+    for i, line in enumerate(iterable, sample_size+1):
+        if i == next_item_index:
             k = random.randint(0, sample_size-1)
             reservoir[k] = (i, line)
             W = W * exp(log(random.random())/sample_size)
@@ -67,17 +65,17 @@ def a_exp_j(iterable: Iterable[str], sample_size: int) -> List[str]:
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
     """
     import heapq
+    from math import log
+
     iterable = iter(iterable)
     h = []
-    for i, (w, v) in enumerate(iterable, 1):
+    for i, (w, v) in islice(enumerate(iterable, 1), sample_size):
         r = random.random() ** (1. / w)
         heapq.heappush(h, (r, i, v))
-        if i == sample_size:
-            break
 
     X = log(random.random()) / log(h[0][0])
 
-    for i, (w, v) in enumerate(iterable, sample_size):
+    for i, (w, v) in enumerate(iterable, sample_size+1):
         X -= w
         if X <= 0.:
             t = h[0][0] ** w
