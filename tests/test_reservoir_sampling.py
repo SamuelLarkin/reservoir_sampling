@@ -10,6 +10,12 @@ class TestReservoirSamplingOptimal:
     """
     Unweighted Sampling Unittests.
     """
+    def test_empty(self):
+        """
+        """
+        samples = reservoir_sampling_optimal((), 7)
+        assert len(samples) == 0
+
     def test_short(self):
         """
         """
@@ -31,6 +37,12 @@ class TestAExpJ:
     """
     Weighted Sampling Unittests.
     """
+    def test_empty(self):
+        """
+        """
+        samples = a_exp_j(zip((), ()), 7)
+        assert len(samples) == 0
+
     def test_short(self):
         """
         """

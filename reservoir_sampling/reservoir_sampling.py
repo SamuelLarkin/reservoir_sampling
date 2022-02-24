@@ -83,18 +83,19 @@ def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str
             ]
     heapify(h)
 
-    X = log(random.random()) / log(h[0][0])
+    if len(h) > 0:
+        X = log(random.random()) / log(h[0][0])
 
-    for i, (w, v) in enumerate(items, start=sample_size):
-        X -= w
-        if X <= 0.:
-            t = h[0][0] ** w
-            r = random.uniform(t, 1) ** (1. / w)
+        for i, (w, v) in enumerate(items, start=sample_size):
+            X -= w
+            if X <= 0.:
+                t = h[0][0] ** w
+                r = random.uniform(t, 1) ** (1. / w)
 
-            heappop(h)
-            heappush(h, (r, i+1, v))
+                heappop(h)
+                heappush(h, (r, i+1, v))
 
-            X = log(random.random()) / log(h[0][0])
+                X = log(random.random()) / log(h[0][0])
 
     return h
 
