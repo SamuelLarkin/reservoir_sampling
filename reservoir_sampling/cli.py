@@ -29,7 +29,7 @@ def cli():
         '--seed',
         'seed',
         type=int,
-        default=2021,
+        default=None,
         show_default=True,
         help="Seed the random number generator to get reproductible results")
 @click.option(
@@ -61,7 +61,8 @@ def unweighted(
     """
     Unweighted reservoir sampling.
     """
-    random.seed(seed)
+    if seed is not None:
+        random.seed(seed)
 
     if len(population_fn) == 0:
         popluation_stream = sys.stdin
@@ -83,7 +84,7 @@ def unweighted(
         '--seed',
         'seed',
         type=int,
-        default=2021,
+        default=None,
         show_default=True,
         help="Seed the random number generator to get reproductible results")
 @click.option(
@@ -131,7 +132,8 @@ def weighted(
     """
     Weighted reservoir sampling.
     """
-    random.seed(seed)
+    if seed is not None:
+        random.seed(seed)
 
     popluation_stream = with_iter(population_fn.open(mode="r", encoding="UTF-8"))
     weight_stream = with_iter(weights_fn.open(mode="r", encoding="UTF-8"))
