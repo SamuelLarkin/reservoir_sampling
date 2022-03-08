@@ -15,7 +15,7 @@ from typing import (
 
 
 
-def r(iterable: Iterable[Any], sample_size: int) -> List[str]:
+def r(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
     """
     sample_size:int Size of the reservoir
     """
@@ -32,7 +32,7 @@ def r(iterable: Iterable[Any], sample_size: int) -> List[str]:
 
 
 
-def l(iterable: Iterable[Any], sample_size: int) -> List[str]:
+def l(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
     """
     sample_size:int Size of the reservoir
     [An optimal algorithm](https://en.wikipedia.org/wiki/Reservoir_sampling)
@@ -60,7 +60,7 @@ def l(iterable: Iterable[Any], sample_size: int) -> List[str]:
 
 
 
-def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[str]:
+def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[Tuple[float, int, Any]]:
     """
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
     """
