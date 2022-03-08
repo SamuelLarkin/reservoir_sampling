@@ -1,4 +1,5 @@
 .eggs/
+.tox/
 __pycache__/
 build/
 dist/
