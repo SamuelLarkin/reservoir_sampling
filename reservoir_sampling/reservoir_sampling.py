@@ -15,7 +15,18 @@ from typing import (
 
 
 
-def r(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
+Index = int
+Sample = Any
+Weight = float
+WeightedSample = Tuple[float, Any]
+UnweightedIndexedSample = Tuple[Index, Sample]
+WeightedIndexedSample = Tuple[Weight, Index, Sample]
+UnweightedSamples = List[UnweightedIndexedSample]
+WeightedSamples = List[WeightedIndexedSample]
+
+
+
+def r(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
     """
     sample_size:int Size of the reservoir
     """
@@ -32,7 +43,7 @@ def r(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
 
 
 
-def l(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
+def l(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
     """
     sample_size:int Size of the reservoir
     [An optimal algorithm](https://en.wikipedia.org/wiki/Reservoir_sampling)
@@ -60,7 +71,7 @@ def l(iterable: Iterable[Any], sample_size: int) -> List[Tuple[int, str]]:
 
 
 
-def a_exp_j(iterable: Iterable[Tuple[float, Any]], sample_size: int) -> List[Tuple[float, int, Any]]:
+def a_exp_j(iterable: Iterable[WeightedSample], sample_size: int) -> WeightedSamples:
     """
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
     """
