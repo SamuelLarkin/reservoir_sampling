@@ -30,6 +30,9 @@ def r(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
     """
     sample_size:int Size of the reservoir
     """
+    if sample_size <= 0:
+        return []
+
     reservoir = []
     for i, line in enumerate(iterable, start=1):
         if i <= sample_size:
@@ -53,6 +56,9 @@ def l(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
             floor,
             log,
             )
+    if sample_size <= 0:
+        return []
+
     items = iter(iterable)
 
     reservoir = list(islice(enumerate(items, start=1), sample_size))
@@ -81,6 +87,9 @@ def a_exp_j(iterable: Iterable[WeightedSample], sample_size: int) -> WeightedSam
             heappush,
             )
     from math import log
+
+    if sample_size <= 0:
+        return []
 
     items = iter(iterable)
     h = [
