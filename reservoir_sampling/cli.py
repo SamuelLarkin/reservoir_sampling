@@ -10,7 +10,9 @@ from reservoir_sampling import (
         a_exp_j,
         l,
         )
-from typing import List
+from typing import (
+        TextIO,
+        )
 
 @click.group()
 @click.help_option("-h", "--help")
@@ -48,12 +50,11 @@ def cli():
         show_default=True,
         help="Sample size")
 @click.argument(
-        "population_fn",
-        nargs=-1,
-        type=Path,
+        "population",
+        type=click.File(mode='r', encoding="UTF-8"),
         )
 def unweighted(
-        population_fn: Path,
+        population: TextIO,
         sample_size: int,
         show_line_number: bool,
         seed: int,
@@ -64,12 +65,8 @@ def unweighted(
     if seed is not None:
         random.seed(seed)
 
-    if len(population_fn) == 0:
-        popluation_stream = sys.stdin
-    else:
-        popluation_stream = with_iter(population_fn[0].open(mode="r", encoding="UTF-8"))
-    popluation_stream = map(str.strip, popluation_stream)
-    samples = l(popluation_stream, sample_size)
+    population = map(str.strip, population)
+    samples = l(population, sample_size)
 
     if show_line_number:
         samples = map(lambda e: f"{e[0]}\t{e[-1]}", samples)
@@ -112,18 +109,16 @@ def unweighted(
         show_default=True,
         help="Sample size")
 @click.argument(
-        "population_fn",
-        nargs=1,
-        type=Path,
+        "population",
+        type=click.File(mode='r', encoding="UTF-8"),
         )
 @click.argument(
-        "weights_fn",
-        nargs=-1,
-        type=Path,
+        "weights",
+        type=click.File(mode='r', encoding="UTF-8"),
         )
 def weighted(
-        population_fn: Path,
-        weights_fn: Path,
+        population: TextIO,
+        weights: TextIO,
         sample_size: int,
         show_line_number: bool,
         show_weights: bool,
@@ -135,12 +130,12 @@ def weighted(
     if seed is not None:
         random.seed(seed)
 
-    popluation_stream = with_iter(population_fn.open(mode="r", encoding="UTF-8"))
-    weight_stream = with_iter(weights_fn.open(mode="r", encoding="UTF-8"))
-    popluation_stream = map(str.strip, popluation_stream)
-    weight_stream = map(str.strip, weight_stream)
-    weight_stream = map(float, weight_stream)
-    samples = a_exp_j(zip(weight_stream, popluation_stream), sample_size)
+    population = map(str.strip, population)
+    weights = map(str.strip, weights)
+    weights = map(float, weights)
+    weighted_population = zip(weights, population)
+
+    samples = a_exp_j(weighted_population, sample_size)
 
     if show_weights:
         samples = map(lambda e: (e[1], f"{e[0]}\t{e[-1]}"), samples)
