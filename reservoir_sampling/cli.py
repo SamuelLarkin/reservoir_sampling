@@ -66,12 +66,14 @@ def unweighted(
         random.seed(seed)
 
     population = map(str.strip, population)
+    if show_line_number:
+        population = enumerate(population, start=1)
+
     samples = l(population, sample_size)
 
     if show_line_number:
         samples = map(lambda e: f"{e[0]}\t{e[-1]}", samples)
-    else:
-        samples = map(itemgetter(1), samples)
+
     print(*samples, sep='\n')
 
 
@@ -131,23 +133,28 @@ def weighted(
         random.seed(seed)
 
     population = map(str.strip, population)
+    if show_line_number:
+        population = enumerate(population)
+
     weights = map(str.strip, weights)
     weights = map(float, weights)
+
     weighted_population = zip(weights, population)
 
     samples = a_exp_j(weighted_population, sample_size)
 
-    if show_weights:
-        samples = map(lambda e: (e[1], f"{e[0]}\t{e[-1]}"), samples)
-    else:
-        samples = map(lambda e: (e[1], e[-1]), samples)
-
     if show_line_number:
-        samples = map(lambda e: f"{e[0]}\t{e[-1]}", samples)
+        if show_weights:
+            samples = map(lambda e: f"{e[1][0]}\t{e[0]}\t{e[1][1]}", samples)
+        else:
+            samples = map(lambda e: f"{e[1][0]}\t{e[1][1]}", samples)
     else:
-        samples = map(itemgetter(1), samples)
-    print(*samples, sep='\n')
+        if show_weights:
+            samples = map(lambda e: f"{e[0]}\t{e[1]}", samples)
+        else:
+            samples = map(itemgetter(1), samples)
 
+    print(*samples, sep='\n')
 
 
 

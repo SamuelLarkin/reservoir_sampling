@@ -27,7 +27,6 @@ class TestL:
         """
         samples = l(range(5), 7)
         assert len(samples) == 5
-        samples = map(itemgetter(-1), samples)
         assert all(a == b for a, b in zip(samples, range(5)))
 
     def test_long(self):
@@ -35,7 +34,7 @@ class TestL:
         """
         samples = l(range(100), 7)
         assert len(samples) == 7
-        assert all(0 <= v < 100 for v in map(itemgetter(1), samples))
+        assert all(0 <= v < 100 for v in samples)
 
 
 

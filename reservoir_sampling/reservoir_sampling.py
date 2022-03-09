@@ -15,14 +15,11 @@ from typing import (
 
 
 
-Index = int
 Sample = Any
 Weight = float
 WeightedSample = Tuple[float, Any]
-UnweightedIndexedSample = Tuple[Index, Sample]
-WeightedIndexedSample = Tuple[Weight, Index, Sample]
-UnweightedSamples = List[UnweightedIndexedSample]
-WeightedSamples = List[WeightedIndexedSample]
+UnweightedSamples = List[Sample]
+WeightedSamples = List[WeightedSample]
 
 
 
@@ -34,13 +31,13 @@ def r(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
         return []
 
     reservoir = []
-    for i, line in enumerate(iterable, start=1):
+    for i, item in enumerate(iterable, start=1):
         if i <= sample_size:
-            reservoir.append((i, line))
+            reservoir.append(item)
         else:
             k = random.randint(0, i)
             if k < sample_size:
-                reservoir[k] = (i, line)
+                reservoir[k] = item
 
     return reservoir
 
@@ -50,6 +47,7 @@ def l(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
     """
     sample_size:int Size of the reservoir
     [An optimal algorithm](https://en.wikipedia.org/wiki/Reservoir_sampling)
+    iterable:
     """
     from math import (
             exp,
@@ -61,15 +59,15 @@ def l(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
 
     items = iter(iterable)
 
-    reservoir = list(islice(enumerate(items, start=1), sample_size))
+    reservoir = list(islice(items, sample_size))
 
     W = exp(log(random.random()) / sample_size)
     next_item_index = sample_size + floor(log(random.random()) / log(1-W)) + 1
 
-    for i, line in enumerate(items, start=sample_size):
+    for i, item in enumerate(items, start=sample_size):
         if i == next_item_index:
             k = random.randint(0, sample_size-1)
-            reservoir[k] = (i+1, line)
+            reservoir[k] = item
             W = W * exp(log(random.random())/sample_size)
             next_item_index += floor(log(random.random()) / log(1-W)) + 1
 
@@ -80,6 +78,7 @@ def l(iterable: Iterable[Any], sample_size: int) -> UnweightedSamples:
 def a_exp_j(iterable: Iterable[WeightedSample], sample_size: int) -> WeightedSamples:
     """
     [Algorithm A-ExpJ](https://en.wikipedia.org/wiki/Reservoir_sampling)
+    iterable: Yields a tuple of weight and item.
     """
     from heapq import (
             heapify,
@@ -93,23 +92,24 @@ def a_exp_j(iterable: Iterable[WeightedSample], sample_size: int) -> WeightedSam
 
     items = iter(iterable)
     h = [
-            (random.random() ** (1. / w), i, v)
-            for i, (w, v) in enumerate(islice(items, sample_size), start=1)
+            (random.random() ** (1. / weight), value)
+            for weight, value in islice(items, sample_size)
             ]
     heapify(h)
 
     if len(h) > 0:
         X = log(random.random()) / log(h[0][0])
 
-        for i, (w, v) in enumerate(items, start=sample_size):
-            X -= w
+        for weight, value in items:
+            X -= weight
             if X <= 0.:
-                t = h[0][0] ** w
-                r = random.uniform(t, 1) ** (1. / w)
+                t = h[0][0] ** weight
+                r = random.uniform(t, 1) ** (1. / weight)
 
                 heappop(h)
-                heappush(h, (r, i+1, v))
+                heappush(h, (r, value))
 
                 X = log(random.random()) / log(h[0][0])
 
+    #return [heappop(h) for i in range(len(h))]
     return h
