@@ -7,6 +7,11 @@ At any point, the current state of the algorithm must permit extraction of a sim
 
 
 ## Install
-```bash
+
+```sh
 python3 -m pip install git+https://github.com/SamuelLarkin/reservoir_sampling.git
+```
+or
+```sh
+python setup.py install --user
 ```
