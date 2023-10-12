@@ -15,3 +15,7 @@ or
 ```sh
 python setup.py install --user
 ```
+or
+```sh
+pip install .
+```
