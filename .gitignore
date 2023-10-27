@@ -1,8 +1,8 @@
+*.egg-info/
+*.pyc
 .eggs/
 .tox/
 __pycache__/
 build/
 dist/
-reservoir_sampling.egg-info/
-
-*.pyc
+venv/
