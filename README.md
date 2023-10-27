@@ -13,9 +13,5 @@ python3 -m pip install git+https://github.com/SamuelLarkin/reservoir_sampling.gi
 ```
 or
 ```sh
-python setup.py install --user
-```
-or
-```sh
-pip install .
+python -m pip install .
 ```
