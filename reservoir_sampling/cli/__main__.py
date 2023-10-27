@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import click
+from click_aliases import ClickAliasedGroup
 
 from .unweighted import cli as cli_unweighted
 from .weighted import cli as cli_weighted
 
 
-@click.group()
+@click.group(cls=ClickAliasedGroup)
 @click.help_option("-h", "--help")
 def cli():
     """
@@ -17,8 +18,8 @@ def cli():
     pass
 
 
-cli.add_command(cli_unweighted)
-cli.add_command(cli_weighted)
+cli.add_command(cli_unweighted, aliases=("un",))
+cli.add_command(cli_weighted, aliases=("w",))
 
 
 
