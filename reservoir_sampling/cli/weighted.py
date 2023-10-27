@@ -1,84 +1,17 @@
 #!/usr/bin/env python3
+
 import click
 import random
-import sys
 
-from more_itertools import with_iter
 from operator import itemgetter
-from pathlib import Path
-from reservoir_sampling import (
-        a_exp_j,
-        l,
-        )
+from reservoir_sampling import a_exp_j
 from typing import (
         TextIO,
         )
 
-@click.group()
-@click.help_option("-h", "--help")
-def cli():
-    """
-    Weighted or unweighted reservoir sampling.
-
-    https://en.wikipedia.org/wiki/Reservoir_sampling
-    """
-    pass
 
 
-
-@cli.command()
-@click.option(
-        '--seed',
-        'seed',
-        type=int,
-        default=None,
-        show_default=True,
-        help="Seed the random number generator to get reproductible results")
-@click.option(
-        '-n',
-        '--line-number/--no-line-number',
-        'show_line_number',
-        default=False,
-        show_default=True,
-        help="Prepend with line number")
-@click.option(
-        '-s',
-        '--size',
-        "sample_size",
-        type=int,
-        default=100,
-        show_default=True,
-        help="Sample size")
-@click.argument(
-        "population",
-        type=click.File(mode='r', encoding="UTF-8"),
-        )
-def unweighted(
-        population: TextIO,
-        sample_size: int,
-        show_line_number: bool,
-        seed: int,
-        ):
-    """
-    Unweighted reservoir sampling.
-    """
-    if seed is not None:
-        random.seed(seed)
-
-    population = map(str.strip, population)
-    if show_line_number:
-        population = enumerate(population, start=1)
-
-    samples = l(population, sample_size)
-
-    if show_line_number:
-        samples = map(lambda e: f"{e[0]}\t{e[-1]}", samples)
-
-    print(*samples, sep='\n')
-
-
-
-@cli.command()
+@click.command("weighted")
 @click.option(
         '--seed',
         'seed',
@@ -118,7 +51,7 @@ def unweighted(
         "weights",
         type=click.File(mode='r', encoding="UTF-8"),
         )
-def weighted(
+def cli(
         population: TextIO,
         weights: TextIO,
         sample_size: int,
