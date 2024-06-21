@@ -1,0 +1,21 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: A Python Implementation of Reservoir Sampling.
+message: A simple reimplementation of reservoir sampling in Python.
+type: software
+authors:
+  - given-names: Samuel
+    family-names: Larkin
+repository-code: 'https://github.com/SamuelLarkin/reservoir_sampling'
+url: 'https://github.com/SamuelLarkin/reservoir_sampling'
+keywords:
+  - Natural Language Processing
+  - NLP
+  - Sampling
+  - Python
+license: MIT
+commit: 093af38
+version: '0.1'
+date-released: '2024-06-21'
