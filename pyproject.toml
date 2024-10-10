@@ -4,46 +4,45 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reservoir-sampling"
-authors = [
-   {name = "Samuel Larkin", email = "Samuel.Larkin@cnrc-nrc.gc.ca"}
-]
-description="Reservoir Sampling"
+authors = [{ name = "Samuel Larkin", email = "Samuel.Larkin@cnrc-nrc.gc.ca" }]
+description = "Reservoir Sampling"
 readme = "README.md"
 requires-python = ">=3.8"
 keywords = ["Tool", "CLI"]
 classifiers = [
-   "Framework :: IPython",
-   "Framework :: Jupyter",
-   "Intended Audience :: Education",
-   "Intended Audience :: End Users/Desktop",
-   "Intended Audience :: Information Technology",
-   "Intended Audience :: Science/Research",
-   "Programming Language :: Python :: 3",
-   "Programming Language :: Python :: 3 :: Only",
-   "Programming Language :: Python :: 3.8",
-   "Programming Language :: Python :: 3.9",
-   "Programming Language :: Python :: 3.10",
-   "Programming Language :: Python :: 3.11",
-   "Programming Language :: Python :: 3.12",
-   "Topic :: Scientific/Engineering :: Artificial Intelligence",
-   "Topic :: Scientific/Engineering :: Information Analysis",
-   "Topic :: Scientific/Engineering :: Mathematics",
-   "Topic :: Software Development :: Libraries",
-   "Topic :: Software Development :: Libraries :: Python Modules",
-   "Topic :: Software Development :: User Interfaces",
-   "Topic :: System :: Installation/Setup",
-   "Topic :: System :: Shells",
-   "Topic :: Terminals",
-   "Topic :: Utilities",
-   "Typing :: Typed",
+  "Framework :: IPython",
+  "Framework :: Jupyter",
+  "Intended Audience :: Education",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: User Interfaces",
+  "Topic :: System :: Installation/Setup",
+  "Topic :: System :: Shells",
+  "Topic :: Terminals",
+  "Topic :: Utilities",
+  "Topic :: Software Development :: User Interfaces",
+  "Topic :: System :: Shells",
+  "Typing :: Typed",
 ]
-dependencies = [
-   "click",
-   ]
+dependencies = ["click"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = ["mypy", "tox"]
+install = ["pyinstaller"]
 
 [project.scripts]
 reservoir-sampling = "reservoir_sampling.__main__:cli"
@@ -56,4 +55,4 @@ repository = "https://github.com/SamuelLarkin/reservoir_sampling"
 files = "reservoir_sampling"
 
 [tool.pytest]
-testpaths="tests"
+testpaths = "tests"
